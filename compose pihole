@@ -13,7 +13,8 @@ services:
       - "80:80/tcp"
       - "443:443/tcp"
     environment:
-      TZ: 'America/Chicago'
+      TZ: ART #esto es nuevo para configurar en argentina, antes estaba la linea de abajo
+      #TZ: 'America/Chicago'
     #   WEBPASSWORD: 'tu clave'
     # Volumes store your data between container upgrades
     volumes:
