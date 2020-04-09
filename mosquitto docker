@@ -1,0 +1,37 @@
+Para ejecutar mosquitto 
+
+1 - crear el archivo mosquitto.conf con lo siguiente:
+
+
+# Place your local configuration in /home/pi/docker/mosquitto/config/conf.d/
+pid_file /var/run/mosquitto.pid
+persistence true
+persistence_location /home/pi/docker/mosquitto/data/
+port 1883
+log_dest file /home/pi/docker/mosquitto/log/mosquitto.log
+log_dest stdout
+
+
+2 - despues desde la carpeta donde tenga el archivo mosquitto.conf ejecutar el siguiente comando:
+
+docker run -it -p 1883:1883 -v mosquitto.conf:/moquitto/config/mosquitto.conf -v /mosquitto/data -v /mosquitto/log arm32v6/eclipse-mosquitto:1.6.9
+
+3 - crear el archivo mosquitto.service en /etc/systemd/system con lo siguiente:
+
+[Unit]
+Description=Servicio de mosquitto docker
+After=docker.service
+Wants=network-online.target docker.socket
+Requires=docker.socket
+
+[Service]
+Restart=on-failure
+ExecStart=/usr/bin/docker run -p 1883:1883 --name mosquitto arm32v6/eclipse-mosquitto
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
+
+4 - ejecutar el comando systemctl enable mosquitto.service para que reinicie el servicio y systemctl start mosquitto.service para ejecutar ahora
+
