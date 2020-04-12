@@ -1,0 +1,46 @@
+version: "3"
+services:
+  
+################## MOSQUITTO #################################
+  mosquitto:
+    # de donde se va a tomar el dockerfile
+    container_name: mosquitto
+    image: eclipse-mosquitto:1.6.9@sha256:88b43f5ea09ebf443dc66bdd675f5c84dbf6fcd6b7028dbc1873ec66d894c89c
+    ports:
+      - 1883:1883
+    volumes:
+      - /home/pi/docker/mosquitto/config:/mosquitto/config
+      - /home/pi/docker/mosquitto/data:/mosquitto/data
+      - /home/pi/docker/mosquitto/log:/mosquitto/log
+    #va a reiniciar al menos que se pare a mano
+    restart: unless-stopped
+
+
+
+ ######################### PIHOLE ############################## 
+  pihole:
+    container_name: pihole
+    #build: .
+    image: pihole/pihole:beta-v5.0-armhf
+    ports: 
+      - 53:53/tcp
+      - 53:53/udp
+      - 67:67/udp
+      - 80:80/tcp
+      - 443:443/tcp
+
+    environment:
+      TZ: America/Cordoba
+      WEBPASSWORD: 'cerro1870'
+    # Volumes store your data between container upgrades
+    volumes:
+       - /home/pi/docker/pihole/etc-pihole/:/etc/pihole/
+       - /home/pi/docker/pihole/etc-dnsmasq.d/:/etc/dnsmasq.d/
+    dns:
+      - 127.0.0.1
+      - 1.1.1.1
+      # Recommended but not required (DHCP needs NET_ADMIN)
+      #  https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
