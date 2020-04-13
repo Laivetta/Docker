@@ -17,6 +17,7 @@ services:
 
 
 
+
  ######################### PIHOLE ############################## 
   pihole:
     container_name: pihole
@@ -44,3 +45,24 @@ services:
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
+
+
+  ######################### NGINX ############################## 
+  nginx:
+    container_name: nginx
+    image: nginx:1.17.9-alpine@sha256:b9ab338c9098779181906dc8b1862b7b97dce90d0ecf03063f3c9bf055ce0aff
+    volumes:
+      - /home/pi/docker/nginx/html:/usr/share/nginx/html
+      # en la linea anterior se ponel el archivo index.html
+      - /home/pi/docker/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf 
+      # en la linea anterior le dice que puerto escuchar a nginx, ojo cuando tenenmos \
+      # un servicio en el mismo puerto 80 por ejemplo pihole
+    ports:
+      - 81:81
+    restart: unless-stopped
+
+
+  ######################### PYTHON ############################## 
+  python:
+    container_name: python
+    image: python:3.6.10-alpine3.11@sha256:587d59ecf83a8ba72531ac64032c2d72ff6f3e64205c287f835dda2f48da4b2d
