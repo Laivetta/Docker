@@ -71,12 +71,18 @@ services:
    ######################## MINECRAFT ##############################  
 
   minecraft-server:
+    #https://github.com/itzg/docker-minecraft-server
+
     ports:
       - 25565:25565
 
     environment:
       EULA: "TRUE"
       MEMORY : 700M
+      ONLINE_MODE : "false" # crea un servidor fuera de linea, usarlo
+      #minecraft/data/server.properties y cambiarlo a false
+
+
 
     image: itzg/minecraft-server:armv7
 
@@ -84,7 +90,4 @@ services:
 
     volumes:
       - /home/pi/docker/minecraft/data:/data
-
-    tty: true
-    stdin_open: true
     restart: unless-stopped
