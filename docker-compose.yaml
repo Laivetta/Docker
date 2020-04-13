@@ -66,3 +66,19 @@ services:
   python:
     container_name: python
     image: python:3.6.10-alpine3.11@sha256:587d59ecf83a8ba72531ac64032c2d72ff6f3e64205c287f835dda2f48da4b2d
+
+
+   ######################## MINECRAFT ##############################  
+  minecraft-server:
+    container_name: minecraft
+    image: itzg/minecraft-server    
+    ports:
+      - "25565:25565"
+
+    environment:
+      EULA: "TRUE"
+
+
+    tty: true
+    stdin_open: true
+    restart: always
