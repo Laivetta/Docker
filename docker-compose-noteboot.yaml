@@ -1,0 +1,62 @@
+version: "3"
+services:
+
+
+
+   ######################## MINECRAFT ##############################  
+
+  minecraft-server:
+    #https://github.com/itzg/docker-minecraft-server
+
+    ports:
+      - 25565:25565
+
+    environment:
+      EULA: "TRUE"
+      MEMORY : 500M
+      ONLINE_MODE : "false" # crea un servidor fuera de linea, usarlo
+      #minecraft/data/server.properties y cambiarlo a false
+      ENABLE_COMMAND_BLOCK : "TRUE"
+      SPAWN_ANIMALS : "TRUE"
+      ALLOW_FLIGHT : "TRUE"
+
+
+    image: itzg/minecraft-server:20190411
+
+    container_name: minecraft
+
+    volumes:
+      - /home/majin/docker/minecraft/data:/data
+    restart: unless-stopped
+
+   ######################## PORTAINER ##############################  
+
+  portainer:
+    image: portainer/portainer:1.23.2@sha256:3ad81644b777c07004e9b6818881e905e09035944d771cea8b4707c81681cd59
+    container_name: portainer
+    command: -H unix:///var/run/docker.sock
+    restart: always
+    ports:
+      - 9000:9000
+      - 8000:8000
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/majin/docker/portainer/portainer_data:/data
+    
+
+  netdata:
+    image: netdata/netdata:v1.21.1@sha256:3708e7483f1610a359219b221633e1021627447cd45893aa2a6854dcc57e0f04
+    #hostname: example.com # set to fqdn of host
+    ports:
+      - 19999:19999
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
+    volumes:
+      - /home/majin/docker/netdata/proc:/host/proc:ro
+      - /home/majin/docker/netdata/sys:/host/sys:ro
+      - /home/majin/docker/netdata/var/run/docker.sock:/var/run/docker.sock:ro
+    restart: always
+    environment:
+      - PGID= 999 # es para ver docker hubo que agregar tambien grep docker /etc/group | cut -d ':' -f 3
